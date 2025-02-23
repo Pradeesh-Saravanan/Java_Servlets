@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Operations with CRUDCrud API</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>CRUD Operation</h1>
+    ID: <input type="text" id = 'title'><br><br>
+    Content : <input type="text" id = "body"><br><br>
+    <button onclick="createPost()" style="background-color: bisque;border-radius: 10px;">Create</button>
+    <button onclick="getPosts()" style="background-color:azure;border-radius: 10px;">Get</button>
+    <button onclick="updatePost()" id ='updateButton' style="background-color: lavender;border-radius: 10px;">Update</button>
+    <br><br>
+    <table id = "postsTable" style="max-width: 60%;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Content</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+    <script>
+        const apiUrl = "http://localhost:8080/Server/posts";
+        function createPost(){
+            const post ={
+                title:document.getElementById('title').value,
+                body:document.getElementById('body').value
+            };
+
+            fetch(apiUrl,
+                {
+                    method:'POST',
+                    headers:{
+                        'Content-Type':'application/json'
+                    },
+                    body:JSON.stringify(post)
+                }
+            ).catch(error=>console.error(error));
+        }
+        function deletePost(postId) {
+            const post ={
+                title:document.getElementById('title').value,
+                body:document.getElementById('body').value
+            };
+            fetch(apiUrl, {
+                method: 'DELETE',
+                headers:{
+                        'Content-Type':'application/json'
+                    },
+                body:JSON.stringify(post)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Post deleted:', data);
+                alert('Post deleted successfully!');
+                getPosts(); 
+            })
+            .catch(error => {
+                console.error('Error deleting post:', error);
+                alert('An error occurred while deleting the post.');
+            });
+        }
+        function updatePost() {
+            const post = {
+                title: document.getElementById('title').value,
+                body: document.getElementById('body').value
+            };
+
+            fetch(`${apiUrl}/update`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(post)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Post updated:', data);
+                alert('Post updated successfully!');
+            });
+        }
+        function getPosts() {
+            fetch(apiUrl)
+            .then(response => response.json())
+            .then(posts => {
+                const tableBody = document.getElementById("postsTable").getElementsByTagName("tbody")[0];
+                tableBody.innerHTML = "";  // Clear existing table content
+
+                posts.forEach(post => {
+                    const row = tableBody.insertRow();
+                    const cell1 = row.insertCell(0);
+                    const cell2 = row.insertCell(1);
+                    const cell3 = row.insertCell(2);
+                    cell1.textContent = post.title;
+                    cell2.textContent = post.body;
+                    cell3.innerHTML = `<button onclick="deletePost(${post.id})">Delete</button>`;
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching posts:', error);
+                alert('An error occurred while fetching the posts.');
+            });
+        }
+    </script>
+</body>
+</html>

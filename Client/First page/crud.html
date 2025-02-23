@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Operations with CRUDCrud API</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+    <script src="functions.js"></script>
+</head>
+<body>
+    <h1>CRUD Operation</h1>
+    ID: <input type="text" id = 'id'><br><br>
+    Content : <input type="text" id = "content"><br><br>
+    <button onclick="createPost()" style="background-color: bisque;border-radius: 10px;">Create</button>
+    <button onclick="getPosts()" style="background-color:azure;border-radius: 10px;">Get</button>
+    <button onclick="updatePost()" id ='updateButton' style="background-color: lavender;border-radius: 10px;">Update</button>
+    <br><br>
+    <table id = "postsTable" style="max-width: 60%;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Content</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+</body>
+</html>

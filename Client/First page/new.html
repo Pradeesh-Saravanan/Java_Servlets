@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Operations with Servlet API</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        button {
+            border-radius: 10px;
+            padding: 8px 16px;
+            margin: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>CRUD Operations with Servlet API</h1>
+    <h2>Manage Posts</h2>
+
+    <!-- Input fields for creating and updating posts -->
+    <label for="id">ID: </label>
+    <input type="text" id="id" placeholder="Post ID"><br><br>
+    <label for="content">Content: </label>
+    <input type="text" id="content" placeholder="Post content"><br><br>
+
+    <button onclick="createPost()" style="background-color: bisque;">Create</button>
+    <button onclick="getPosts()" style="background-color: azure;">Get Posts</button>
+    <button onclick="updatePost()" id="updateButton" style="background-color: lavender;">Update</button><br><br>
+
+    <!-- Table to display posts -->
+    <table id="postsTable" style="max-width: 60%; margin-top: 20px;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Content</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <!-- External JavaScript file -->
+    <script>
+        const apiUrl = "http://localhost:8080/Server/posts";  // URL to your servlet
+
+        // Create a new post
+        function createPost() {
+            const post = {
+                title: document.getElementById('id').value,
+                body: document.getElementById('content').value,
+            };
+
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(post),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Post created:", data);
+                getPosts(); // Refresh the posts table
+            })
+            .catch(error => console.error("Error:", error));
+
+            document.getElementById('id').value = '';
+            document.getElementById('content').value = '';
+        }
+
+        // Get all posts and display them in the table
+        function getPosts() {
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const postsTable = document.getElementById('postsTable').getElementsByTagName('tbody')[0];
+                    postsTable.innerHTML = ""; // Clear any existing rows
+
+                    data.forEach(element => {
+                        const row = postsTable.insertRow();
+                        row.insertCell(0).textContent = element.title;
+                        row.insertCell(1).textContent = element.body;
+
+                        const actionsCell = row.insertCell(2);
+                        actionsCell.innerHTML = `
+                            <button onClick="show('${element.id}', '${element.title}', '${element.body}')" style="background-color: bisque;">Show</button>
+                            <button onClick="deletePost('${element.id}')" style="background-color: lavender;">Delete</button>
+                        `;
+                    });
+                })
+                .catch(error => console.error("Error:", error));
+
+            document.getElementById('id').value = '';
+            document.getElementById('content').value = '';
+        }
+
+        // Set the fields with post data for updating
+        function show(postId, title, content) {
+            document.getElementById('id').value = title;
+            document.getElementById('content').value = content;
+
+            // Dynamically change the 'Update' button onclick event
+            document.getElementById('updateButton').onclick = function() {
+                updatePost(postId);
+            };
+        }
+
+        // Update an existing post
+        function updatePost(postId) {
+            const post = {
+                title: document.getElementById('id').value,
+                body: document.getElementById('content').value,
+            };
+
+            if (post.title && post.body) {
+                fetch(`${apiUrl}/${postId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(post),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Post updated:", data);
+                    getPosts(); // Refresh the posts table
+                })
+                .catch(error => console.error("Error:", error));
+            }
+
+            document.getElementById('id').value = '';
+            document.getElementById('content').value = '';
+        }
+
+        // Delete a post
+        function deletePost(postId) {
+            fetch(`${apiUrl}/${postId}`, {
+                method: 'DELETE',
+            })
+            .then(response => {
+                if (!response.ok) {
+                    alert("Failed to delete post");
+                } else {
+                    alert("Post deleted successfully");
+                    getPosts(); // Refresh the posts table
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
