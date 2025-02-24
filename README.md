@@ -2,6 +2,7 @@
 
 Practice project in Training period
 
+#First week
 # Client (Post Manager)
 
 Post Manager is the web application for managing posts, allowing you to add, update, delete, and search posts by title or content. The backend is assumed to be a RESTful API running at `http://localhost:8080/Java_Servlets_Servers/posts`.
@@ -54,7 +55,7 @@ A simple RESTful API for managing blog posts. You can create, read, update, dele
 
 - **Clone the repo:**
     ```javascript
-    git clone https://github.com/yourusername/post-service-api.git```
+    git clone https://github.com/Pradeesh-Saravanan/Java_Servlets.git```
 - **Set up MySQL:**
         Create a database demo and a posts table.
         Update database credentials in the code.
@@ -69,3 +70,18 @@ A simple RESTful API for managing blog posts. You can create, read, update, dele
 - **POST /posts:** Create a new post.
 - **PUT /posts:** Update an existing post by title.
 - **DELETE /posts:** Delete a post by title.
+
+#24/02/2025
+
+Features added 
+- **User registration:** signup.html
+- **User login page:** login.html
+- **Users table:** database table for userLogin 
+- **Dynamic data for users:** filter data by user created
+
+Issues resolved
+
+- **Direct dashboard access:** using localStorage
+- **Lazy login:** accessing login after login successsful redirects to dashboard.html using localStorage
+- **Plain passwords in database:** used BCrypt[ hashpw(), getsalt(), checkpw() ] in servlets 
+- **Avoid direct links to file in browsers:** used live server and relative mapping of html pages
