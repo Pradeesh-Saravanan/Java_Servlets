@@ -27,9 +27,10 @@
         }
     </style>
 </head>
-<body>
-    <h1>Post Manager</h1>
-
+<body onload="auth()">
+    <h1>Post Manager </h1>
+    <div id = "nameDisplay"></div>
+    <input type="submit" value="Logout" onclick="logout()">
     <div class="form-container">
         <h2>Add New Post</h2>
         <input type="text" id="title" placeholder="Title">
@@ -49,12 +50,12 @@
         <input type="text" id="deleteTitle" placeholder="Title">
         <button onclick="deletePost()">Delete Post</button>
     </div>
-    <form class="form-container" method="get" onsubmit="searchTitleOnPost()">
+    <!-- <form class="form-container" method="get" > -->
         <h2>Search by title</h2>
         <input type="text" id="keyTitle" placeholder="Title">
-        <input type="submit" value="Search">
-        <!-- <button onclick="searchTitleOnPost()">Search</button> -->
-    </form>
+        <!-- <input type="submit" value="Search"> -->
+        <button onclick="searchTitleOnPost()">Search</button>
+    <!-- </form> -->
     <div class="form-container">
         <h2>Search By content</h2>
         <input type="text" id="keyContent" placeholder="Title">
@@ -83,9 +84,16 @@
     </table>
 
     <script>
-        const API_URL = "http://localhost:8080/Java_Servlets_Servers/posts"; 
-
+        const url = new URLSearchParams(window.location.search);
+        const user = url.get("user");
+            if(localStorage.getItem("auth")!="true" | localStorage.getItem("user")!=user){
+                alert("login");
+                window.location.href = `login.html`;
+            }
+        const API_URL = `http://localhost:8080/Java_Servlets_Servers/posts?user=${user}`; 
+        document.getElementById("nameDisplay").innerHTML = `<h2>${user}</h2>`;
         async function fetchPosts() {
+            console.log(API_URL);
             try {
                 const response = await fetch(API_URL);
                 if (!response.ok) throw new Error("Failed to fetch posts");
@@ -108,10 +116,14 @@
             }
         }
 
+        function logout(){
+            localStorage.setItem("user",null);
+            localStorage.setItem("auth",false);
+            window.location.href = `login.html`;
+        }
         async function addPost() {
             const title = document.getElementById("title").value;
             const body = document.getElementById("body").value;
-
             if (!title || !body) {
                 alert("Please fill in both title and body.");
                 return;
@@ -121,7 +133,7 @@
                 const response = await fetch(API_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ "title":title, "body":body })
+                    body: JSON.stringify({ "title":title, "body":body})
                 });
 
                 if (!response.ok) throw new Error("Failed to add post");
@@ -146,7 +158,7 @@
                 const response = await fetch(API_URL, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ title, body })
+                    body: JSON.stringify({ title, body})
                 });
 
                 if (!response.ok) throw new Error("Failed to update post");
@@ -165,14 +177,10 @@
             }
 
             try {
-                const response = await fetch('${API_URL}/${title}?key=${key}', {
+                const response = await fetch(`${API_URL}&keyTitle=${key}`, {
                     method: 'GET',
-                    // headers: {
-                    //     "Content-Type": "application/json"
-                    // },
-                    // body: JSON.stringify({ key })
                 });
-
+                console.log(`${API_URL}&keyTitle=${key}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch data');
                 }
@@ -191,7 +199,7 @@
                 });
                 document.getElementById('keyTitle').value='';
             } catch (error) {
-                console.error("Error searching posts:", error.Error);
+                console.error("Error searching posts:", error);
                 alert("Failed to search posts. Check console for details.");
             }
         }
@@ -203,12 +211,8 @@
             }
 
             try {
-                const response = await fetch(API_URL, {
-                    method: 'SEARCHCONTENT',
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ key })
+                const response = await fetch(`${API_URL}&keyContent=${key}`, {
+                    method: 'GET'
                 });
 
                 if (!response.ok) {
@@ -245,7 +249,7 @@
                 const response = await fetch(API_URL, {
                     method: "DELETE",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ title })
+                    body: JSON.stringify({ title})
                 });
 
                 if (!response.ok) throw new Error("Failed to delete post");

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>SignUp</title>
+        <script>
+            async function login(event){
+                event.preventDefault();  
+                const user = document.getElementById("username").value;
+                const passKey = document.getElementById("password").value;
+                if (!user || !passKey) {
+                    alert("Fill all fields");
+                    return;
+                }
+                const name = {
+                    username :user,
+                    password:passKey
+                }
+
+                try {
+                    const response = await fetch("http://localhost:8080/Java_Servlets_Servers/register", {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(name)
+                    });
+                    const data = await response.json(); 
+                    console.log(data); 
+                    if(data.status == "success"){
+                        window.location.href="login.html";
+                    }
+                    if(data.status =='failed'){
+                        alert(data.message);
+                        return;
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <h1>SignUp</h1>
+        <form method="post" onsubmit="login(event)">
+            <input type="text" placeholder="Username" id="username">
+            <input type="password" placeholder="Password" id="password">  
+            <input type="submit" value="Register">
+        </form>
+        <br><br>
+        <a href="login.html">Login</a>
+    </body>
+</html> 
