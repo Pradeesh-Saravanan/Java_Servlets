@@ -8,14 +8,6 @@
   	<servlet-name>posts</servlet-name>
   	<url-pattern>/posts</url-pattern>
   </servlet-mapping>
-  <filter>
-  <filter-name>authFilter</filter-name>
-  <filter-class>com.service.Authenticator</filter-class>
-  </filter>
-  <filter-mapping>
-  	<filter-name>authFilter</filter-name>
-  	<url-pattern>/posts</url-pattern>
-  </filter-mapping>
   <servlet>
   	<servlet-name>login</servlet-name>
   	<servlet-class>com.service.LoginService</servlet-class>

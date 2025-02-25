@@ -27,7 +27,7 @@
         }
     </style>
 </head>
-<body>
+<body onload="auth()">
     <h1>Post Manager </h1>
     <div id = "nameDisplay"></div>
     <input type="submit" value="Logout" onclick="logout()">
@@ -86,13 +86,16 @@
     <script>
         const url = new URLSearchParams(window.location.search);
         const user = url.get("user");
+            if(localStorage.getItem("auth")!="true" | localStorage.getItem("user")!=user){
+                alert("login");
+                window.location.href = `login.html`;
+            }
         const API_URL = `http://localhost:8080/Java_Servlets_Servers/posts?user=${user}`; 
         document.getElementById("nameDisplay").innerHTML = `<h2>${user}</h2>`;
         async function fetchPosts() {
+            console.log(API_URL);
             try {
-                const response = await fetch(API_URL,
-                    {credentials: 'include'}
-                );
+                const response = await fetch(API_URL);
                 if (!response.ok) throw new Error("Failed to fetch posts");
                 const posts = await response.json();
                 const tableBody = document.querySelector("#postsTable tbody");
@@ -111,6 +114,12 @@
             } catch (error) {
                 console.error("Error fetching posts:", error.API_URL);
             }
+        }
+
+        function logout(){
+            localStorage.setItem("user","null");
+            localStorage.setItem("auth","false");
+            window.location.href = `login.html`;
         }
         async function addPost() {
             const title = document.getElementById("title").value;

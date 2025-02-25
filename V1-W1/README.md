@@ -71,7 +71,7 @@ A simple RESTful API for managing blog posts. You can create, read, update, dele
 - **PUT /posts:** Update an existing post by title.
 - **DELETE /posts:** Delete a post by title.
 
-# 24/02/2025
+#24/02/2025
 
 Features added 
 - **User registration:** signup.html
@@ -85,11 +85,3 @@ Issues resolved
 - **Lazy login:** accessing login after login successsful redirects to dashboard.html using localStorage
 - **Plain passwords in database:** used BCrypt[ hashpw(), getsalt(), checkpw() ] in servlets 
 - **Avoid direct links to file in browsers:** used live server and relative mapping of html pages
-
-# 25/02/2025
-
-Features added and learned: 
-- **Backend authentication:** login.html
-- **Servlet Filters** 
-- **OWASP TOp 10** 
-- **Session and Cookies:** filter data by user created

@@ -3,10 +3,10 @@
     <head>
         <title>Login</title>
         <script>
-            // if(localStorage.getItem("auth")==="true"){
-            //     const user = localStorage.getItem("user");
-            //     window.location.href=`dashboard.html?user=${user}`;
-            // }
+            if(localStorage.getItem("auth")==="true"){
+                const user = localStorage.getItem("user");
+                window.location.href=`dashboard.html?user=${user}`;
+            }
             async function login(event){
                 event.preventDefault();  
                 const user = document.getElementById("username").value;
@@ -26,7 +26,6 @@
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        credentials: 'include',
                         body: JSON.stringify(name)
                     });
                     const data = await response.json();  

@@ -12,16 +12,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.mindrot.jbcrypt.BCrypt;
-
 import com.google.gson.Gson;
-
-
 
 public class LoginService extends HttpServlet{
 	private static final long serialVersionUID = 9001827459316047966L;
@@ -36,24 +31,20 @@ public class LoginService extends HttpServlet{
 	private Connection getConnection() throws SQLException, ClassNotFoundException{
 		return DriverManager.getConnection("jdbc:mysql://localhost:3306/demo","root","password");
 	}
-
 	@Override
     protected void doOptions(HttpServletRequest request, HttpServletResponse response) 
         throws ServletException, IOException {
-        response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
-        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
         response.setStatus(HttpServletResponse.SC_OK); 
     }
 	@Override
-	protected void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException,IOException{
-        response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
-        response.setHeader("Access-Control-Allow-Credentials", "true");
+	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException,IOException{
+		response.setHeader("Access-Control-Allow-Origin", "*"); 
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type , Authorization");
-        response.setHeader("Access-Control-Allow-Credentials", "true");
-        System.out.println("Login servlet is running...");
+        
         if ("OPTIONS".equals(request.getMethod())) {
             response.setStatus(HttpServletResponse.SC_OK);
             return;
@@ -67,7 +58,6 @@ public class LoginService extends HttpServlet{
         String json = sb.toString();
         Gson gson = new Gson();
         User user = gson.fromJson(json, User.class);
-        
         try(Connection conn = getConnection()){
         	String query = "select password from userLogin where username = ?";
         	try(PreparedStatement stmt = conn.prepareStatement(query))
@@ -76,10 +66,8 @@ public class LoginService extends HttpServlet{
         		ResultSet rs = stmt.executeQuery();
         		Map<String,String> map= new HashMap<>();
         		if(rs.next()) {
+        					String password = rs.getString("password");
   		        			if(BCrypt.checkpw(user.getPassword(),rs.getString("password"))) {
-  		        				Cookie ck = new Cookie("user",user.getUsername());
-  		        				response.addCookie(ck);
-  		        				System.out.println("Cookie set in Login...");
 		        				response.setStatus(HttpServletResponse.SC_OK);
 		        				response.setContentType("application/json");
 		        				map.put("status", "success");
