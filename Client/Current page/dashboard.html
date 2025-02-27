@@ -27,7 +27,8 @@
         }
     </style>
 </head>
-<body>
+<body style="background-color: darkslategray;
+            color: white;font-family: monospace;">
     <h1>Post Manager </h1>
     <div id = "nameDisplay"></div>
     <input type="submit" value="Logout" onclick="logout()">
@@ -62,7 +63,8 @@
         <button onclick="searchContentOnPost()">Search</button>
     </div>
     <h2>Posts</h2>
-    <table id="postsTable">
+    <table id="postsTable" style="background-color: darkslategray;
+            color: white;font-family: monospace;">
         <thead>
             <tr>
                 <th>Title</th>
@@ -72,7 +74,8 @@
         <tbody>
         </tbody>
     </table><br><br>
-    <table id="searchTable">
+    <table id="searchTable" style="background-color: darkslategray;
+            color: white;font-family: monospace;">
         <thead>
             <tr>
                 <th>Title</th>
@@ -86,15 +89,19 @@
     <script>
         const url = new URLSearchParams(window.location.search);
         const user = url.get("user");
-        const API_URL = `http://localhost:8080/Java_Servlets_Servers/posts?user=${user}`; 
+        const API_URL = `http://localhost:8080/StorageAPI/dashboard?user=${user}`; 
         document.getElementById("nameDisplay").innerHTML = `<h2>${user}</h2>`;
         async function fetchPosts() {
             try {
-                const response = await fetch(API_URL,
+                  const response = await fetch(API_URL,
                     {credentials: 'include'}
                 );
                 if (!response.ok) throw new Error("Failed to fetch posts");
                 const posts = await response.json();
+                if(posts.status=="failed"){
+                    alert("Authentication failed! Login please");
+                    window.location.href="login.html";
+                }
                 const tableBody = document.querySelector("#postsTable tbody");
                 tableBody.innerHTML = ""; 
 

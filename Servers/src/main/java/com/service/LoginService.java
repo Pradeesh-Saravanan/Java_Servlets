@@ -47,7 +47,7 @@ public class LoginService extends HttpServlet{
         response.setStatus(HttpServletResponse.SC_OK); 
     }
 	@Override
-	protected void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException,IOException{
+	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException,IOException{
         response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
@@ -79,6 +79,7 @@ public class LoginService extends HttpServlet{
   		        			if(BCrypt.checkpw(user.getPassword(),rs.getString("password"))) {
   		        				Cookie ck = new Cookie("user",user.getUsername());
   		        				response.addCookie(ck);
+  		        				System.out.println(ck);
   		        				System.out.println("Cookie set in Login...");
 		        				response.setStatus(HttpServletResponse.SC_OK);
 		        				response.setContentType("application/json");

@@ -1,58 +1,129 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Login</title>
-        <script>
-            // if(localStorage.getItem("auth")==="true"){
-            //     const user = localStorage.getItem("user");
-            //     window.location.href=`dashboard.html?user=${user}`;
-            // }
-            async function login(event){
-                event.preventDefault();  
-                const user = document.getElementById("username").value;
-                const passKey = document.getElementById("password").value;
-                if (!user || !passKey) {
-                    alert("Fill all fields");
-                    return;
-                }
-                const name = {
-                    username :user,
-                    password:passKey
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            background-color: darkslategray;
+            color: white;
+            /* font-family: Arial, sans-serif; */
+            font-family: monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 70px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        .login-container h1 {
+            margin-bottom: 20px;
+        }
+        .login-container input {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+        }
+        .login-container button {
+            padding: 10px 20px;
+            background-color: teal;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .login-container button:disabled {
+            background-color: gray;
+            cursor: not-allowed;
+        }
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+        .signup-link {
+            color: aliceblue;
+            margin-top: 10px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Login</h1>
+        <form id="login-form">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit" id="submit-button">Login</button>
+        </form>
+        <div id="error-message" class="error-message"></div>
+        <a href="signUp.html" class="signup-link">Sign Up</a>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById("login-form");
+        const errorMessage = document.getElementById("error-message");
+        const submitButton = document.getElementById("submit-button");
+
+        loginForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const user = document.getElementById("username").value.trim();
+            const passKey = document.getElementById("password").value.trim();
+
+            if (!user || !passKey) {
+                showError("Please fill in all fields.");
+                return;
+            }
+
+            const credentials = {
+                username: user,
+                password: passKey
+            };
+
+            submitButton.disabled = true;
+            errorMessage.textContent = "";
+
+            try {
+                const response = await fetch("http://localhost:8080/StorageAPI/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "include", 
+                    body: JSON.stringify(credentials)
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.message || "Login failed. Please try again.");
                 }
 
-                try {
-                    const response = await fetch("http://localhost:8080/Java_Servlets_Servers/login", {
-                        method: "POST",
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        credentials: 'include',
-                        body: JSON.stringify(name)
-                    });
-                    const data = await response.json();  
-                    console.log(data); 
-                    if(response.ok && data.status == "success"){
-                        localStorage.setItem("auth",true);
-                        localStorage.setItem("user",user);
-                        window.location.href=`dashboard.html?user=${user}`;
-                    }
-                    if(data.status =='failed'){
-                        alert(data.message);
-                        return;
-                    }
-                } catch (error) {
-                    console.error("Error:", error);
+                const data = await response.json();
+                if (data.status === "success") {
+                    confirm("Login successful....");
+                    window.location.href = `dashboard.html?user=${user}`;
+                } else {
+                    throw new Error(data.message || "Login failed. Please try again.");
                 }
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                submitButton.disabled = false;
             }
-        </script>
-    </head>
-    <body>
-        <h1>Login</h1>
-        <form method="post" onsubmit="login(event)">
-            <input type="text" placeholder="Username" id="username">
-            <input type="password" placeholder="Password" id="password">  
-            <input type="submit" value="Login">
-        </form><br><br>
-        <a href="signUp.html">Sign Up</a>
-    </body>
-</html> 
+        });
+
+        function showError(message) {
+            errorMessage.textContent = message;
+        }
+    </script>
+</body>
+</html>

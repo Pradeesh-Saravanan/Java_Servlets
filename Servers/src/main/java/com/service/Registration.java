@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.mindrot.jbcrypt.BCrypt;
+import org.mindrot.jbcrypt.*;
 
 import com.google.gson.*;	
 
@@ -34,8 +34,8 @@ public class Registration extends HttpServlet {
 	@Override
 	protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException,IOException{
 		response.setHeader("Access-Control-Allow-Origin", "*");
-		response.setHeader("Access-Control-Allow-Methods","GET,POST,PUT,OPTIONS");
-		response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+		response.setHeader("Access-Control-Allow-Methods","POST,OPTIONS");
+		response.setHeader("Access-Control-Allow-Headers", "Content-Type, access-control-allow-methods");
 		response.setStatus(HttpServletResponse.SC_OK);
 	}
 	private Connection getConnection() throws SQLException, ClassNotFoundException{
@@ -44,8 +44,8 @@ public class Registration extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException{
 		response.setHeader("Access-Control-Allow-Origin","*");
-		response.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
-		response.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,OPTIONS");
+		response.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization,access-control-allow-methods");
+		response.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
 		if("OPTIONS".equals(request.getMethod()))
 		{
 			response.setStatus(HttpServletResponse.SC_OK);
