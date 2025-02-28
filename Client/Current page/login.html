@@ -17,11 +17,13 @@
             margin: 0;
         }
         .login-container {
-            background-color: rgba(0, 0, 0, 0.7);
+            /* background-color: rgba(0, 0, 0, 0.7); */
+            background-color: #DCD7C9;
             padding: 70px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             text-align: center;
+            color: black;
         }
         .login-container h1 {
             margin-bottom: 20px;
@@ -36,8 +38,8 @@
         }
         .login-container button {
             padding: 10px 20px;
-            background-color: teal;
-            color: white;
+            /* background-color: teal; */
+            color: black;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -51,7 +53,7 @@
             margin-top: 10px;
         }
         .signup-link {
-            color: aliceblue;
+            color: black;
             margin-top: 10px;
             display: block;
         }
@@ -74,6 +76,24 @@
         const errorMessage = document.getElementById("error-message");
         const submitButton = document.getElementById("submit-button");
 
+        onload();
+        // const user = document.getElementById("username").value.trim();
+        async function onload() {
+            try {
+                const response = await fetch("http://localhost:8080/StorageAPI/secure/login", {
+                    method: "GET",
+                    credentials: "include", 
+                });
+                const data = await response.json();
+                console.log(data.status);
+                if (response.ok || data.status === "success") {
+                    // confirm("Login successful....");
+                    window.location.href = `dashboard.html?user=${data.user}`;
+                }
+            } catch (error) {
+                showError(error.message);
+            }
+        }
         loginForm.addEventListener("submit", async (event) => {
             event.preventDefault();
             const user = document.getElementById("username").value.trim();
@@ -102,19 +122,24 @@
                     body: JSON.stringify(credentials)
                 });
 
-                if (!response.ok) {
-                    const data = await response.json();
-                    throw new Error(data.message || "Login failed. Please try again.");
-                }
+                // if (!response.ok) {
+                //     const data = await response.json();
+                //     // throw new Error(data.message || "Login failed. Please try again.");
+                //     if(data.status=='failed'){
+                //         alert('wait');
+                //         window.location.href="login.html";
+                //     }
+                // }
 
                 const data = await response.json();
-                if (data.status === "success") {
-                    confirm("Login successful....");
+                if (response.ok || data.status === "success") {
+                    // confirm("Login successful....");
                     window.location.href = `dashboard.html?user=${user}`;
                 } else {
                     throw new Error(data.message || "Login failed. Please try again.");
                 }
             } catch (error) {
+                console.log("button event");
                 showError(error.message);
             } finally {
                 submitButton.disabled = false;
@@ -122,7 +147,8 @@
         });
 
         function showError(message) {
-            errorMessage.textContent = message;
+            // errorMessage.textContent = message;
+            console.log(message);
         }
     </script>
 </body>

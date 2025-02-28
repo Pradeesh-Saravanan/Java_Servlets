@@ -17,7 +17,7 @@
                 }
 
                 try {
-                    const response = await fetch("http://localhost:8080/Java_Servlets_Servers/register", {
+                    const response = await fetch("http://localhost:8080/StorageAPI/register", {
                         method: "POST",
                         headers: {
                             'Content-Type': 'application/json',
@@ -38,15 +38,66 @@
                 }
             }
         </script>
+        <style>
+            body {
+            background-color: darkslategray;
+            color: white;
+            /* font-family: Arial, sans-serif; */
+            font-family: monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .register-container {
+            /* background-color: rgba(0, 0, 0, 0.7); */
+            background-color: #DCD7C9;
+            padding: 70px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            color: black;
+        }
+        .register-container h1 {
+            margin-bottom: 20px;
+        }
+        .register-container input {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+        }
+        .register-container button {
+            padding: 10px 20px;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .register-container button:disabled {
+            background-color: gray;
+            cursor: not-allowed;
+        }
+        .login-link {
+            color: black;
+            margin-top: 10px;
+            display: block;
+        }
+        </style>
     </head>
-    <body>
-        <h1>SignUp</h1>
-        <form method="post" onsubmit="login(event)">
-            <input type="text" placeholder="Username" id="username">
-            <input type="password" placeholder="Password" id="password">  
-            <input type="submit" value="Register">
-        </form>
-        <br><br>
-        <a href="login.html">Login</a>
+    <body style="background-color: darkslategray;color: white;">
+        <div class="register-container">
+            <h1>SignUp</h1>
+            <form method="post" onsubmit="login(event)" id ="register-form">
+                <input type="text" placeholder="Username" id="username" required>
+                <input type="password" placeholder="Password" id="password" required>  
+                <button type="submit" value="Register">Register</button>
+            </form>
+            <br><br>
+            <a href="login.html" class="login-link">Login</a>
+        </div>
     </body>
 </html> 

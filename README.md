@@ -93,3 +93,18 @@ Features added and learned:
 - **Servlet Filters** 
 - **OWASP TOp 10** 
 - **Session and Cookies:** filter data by user created
+
+# 28/02/2025
+
+Issues faced:
+
+- **Security (OWASP)**
+- **Unauthorized access and update of data**
+
+Changes made:
+
+- **Session management:** moved to Servlet using Cookies
+- **User Interface:** Popup form creation, Using same table to display search results
+- **Easy usage:** Dedicated buttons for update and delete posts
+- **Lazy login:** Easy login after authenticated using cookie id
+- **Database schema:** userLogin(username,password,id,value) where UUID and boolean for value is used

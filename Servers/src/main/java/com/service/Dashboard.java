@@ -5,12 +5,14 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 import com.google.gson.*;
-public class Helper extends HttpServlet {
+public class Dashboard extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final String JDBC_URL = "jdbc:mysql://localhost:3306/demo"; 
     private static final String JDBC_USER = "root"; 
     private static final String JDBC_PASSWORD = "password"; 
+    private static final String ORIGIN_STRING = "http://127.0.0.1:5500";
+//    private static final String ORIGIN_STRING = "*";
 
     private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
@@ -18,7 +20,7 @@ public class Helper extends HttpServlet {
     @Override
     protected void doOptions(HttpServletRequest request, HttpServletResponse response) 
         throws ServletException, IOException {
-        response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+        response.setHeader("Access-Control-Allow-Origin", ORIGIN_STRING);
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -34,7 +36,7 @@ public class Helper extends HttpServlet {
     }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+        response.setHeader("Access-Control-Allow-Origin", ORIGIN_STRING);
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -44,17 +46,6 @@ public class Helper extends HttpServlet {
             return;
         }
         System.out.println("Dashboard is running");
-		Cookie cks[] =request.getCookies();
-		if(cks!=null) {
-			for(Cookie ck:cks) {
-				if("username".equals(ck.getName())) {
-					System.out.println(ck.getValue());
-				}
-			}
-		}
-		else {
-			System.out.println("Cookies are null");
-		}
         response.setContentType("application/json");
 		PrintWriter out = response.getWriter();
 		Gson gson = new Gson();
@@ -101,7 +92,8 @@ public class Helper extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	response.setHeader("Access-Control-Allow-Origin", "*"); 
+//    	response.setHeader("Access-Control-Allow-Origin", "*"); 
+        response.setHeader("Access-Control-Allow-Origin", ORIGIN_STRING);
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         
@@ -127,6 +119,9 @@ public class Helper extends HttpServlet {
                 stmt.setString(3, request.getParameter("user"));
                 stmt.executeUpdate();
             }
+            catch(SQLException e) {
+            	e.printStackTrace();
+            }
             response.setStatus(HttpServletResponse.SC_CREATED); 
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -138,7 +133,8 @@ public class Helper extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	response.setHeader("Access-Control-Allow-Origin", "*"); 
+//    	response.setHeader("Access-Control-Allow-Origin", "*"); 
+        response.setHeader("Access-Control-Allow-Origin", ORIGIN_STRING);
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
         
@@ -181,7 +177,8 @@ public class Helper extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	response.setHeader("Access-Control-Allow-Origin", "*"); 
+//    	response.setHeader("Access-Control-Allow-Origin", "*"); 
+        response.setHeader("Access-Control-Allow-Origin", ORIGIN_STRING);
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
         
@@ -209,6 +206,9 @@ public class Helper extends HttpServlet {
                 } else {
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
                 }
+            }
+            catch(SQLException e) {
+            	e.printStackTrace();
             }
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);  

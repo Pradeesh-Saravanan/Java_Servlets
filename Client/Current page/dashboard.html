@@ -5,25 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Post Manager</title>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        *{
+            font-family: monospace;
         }
-        table, th, td {
-            border: 1px solid black;
+        table {
+            width: 98%;
+            margin-left: 1%;
+            margin-top: 3%;
+            border-collapse: collapse;
+            background-color:aliceblue;
+            color: black;
+        }
+        table, th, td,tr {
+            /* border: 1px solid white; */
+            border-bottom:1px solid #DCD7C9;
+            font-size: large;
         }
         th, td {
-            padding: 8px;
+            padding: 9px;
             text-align: left;
         }
         th {
-            background-color: #f2f2f2;
-        }
+            background-color: #DCD7C9;
+        } 
+       
         .form-container {
             margin-bottom: 20px;
         }
         .form-container input {
             margin-right: 10px;
+        }
+        .overlay {
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); Semi-transparent black;
+            display: none; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 1000; 
+            /* background: rgba( 255, 255, 255, 0.5 ); */
+            box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+            backdrop-filter: blur( 3.5px );
+            -webkit-backdrop-filter: blur( 3.5px );
+            border: 1px solid rgba( 255, 255, 255, 0.18 );
+        }
+
+        .popup {
+            background-color: darkslategray;
+            padding: 40px;
+            border-radius: 5px;
+            position: relative; 
+            width: 400px; 
+        }
+        .popupTextBox{
+            background-color: white;
+            color: black;
+            border: 2px;
+            font-size: medium;
+            border-radius: 5px;
+            margin: 20px;
+            padding: 10px;
+        }
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .refresh{
+            position: absolute;
+            right: 10px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: medium;
+        }
+        .button{
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        .textBox{
+            background-color: white;
+            color: black;
+            border: 2px;
+            font-size: large;
+            border-radius: 3px;
+            margin: 5px;
         }
     </style>
 </head>
@@ -31,77 +102,117 @@
             color: white;font-family: monospace;">
     <h1>Post Manager </h1>
     <div id = "nameDisplay"></div>
-    <input type="submit" value="Logout" onclick="logout()">
-    <div class="form-container">
-        <h2>Add New Post</h2>
-        <input type="text" id="title" placeholder="Title">
-        <input type="text" id="body" placeholder="Body">
-        <button onclick="addPost()">Add Post</button>
-    </div>
+    <input type="submit" value="Logout" onclick="logout()" class="close">
 
-    <div class="form-container">
-        <h2>Update Post</h2>
-        <input type="text" id="updateTitle" placeholder="Title">
-        <input type="text" id="updateBody" placeholder="New Body">
-        <button onclick="updatePost()">Update Post</button>
+    <br><br>
+    <button id = "create" class="button">Create</button>
+    <div id = "Overlay" class="overlay">
+        <div id ="popupForm" class="popup">
+            <span id="closePopupButton" class="close">&times;</span>
+            <h2>Add New Post</h2>
+            <input type="text" id="title" placeholder="Title" class="popupTextBox">
+            <input type="text" id="body" placeholder="Body" class="popupTextBox">
+            <button onclick="addPost()" id = "addbutton" class="button">Create</button>
+        </div>
     </div>
-
-    <div class="form-container">
-        <h2>Delete Post</h2>
-        <input type="text" id="deleteTitle" placeholder="Title">
-        <button onclick="deletePost()">Delete Post</button>
+    <div id = "updatePage" class="overlay">
+        <div id ="updatepopupForm" class="popup">
+            <span id="updateclosePopupButton" class="close">&times;</span>
+            <h2>Update Post</h2>
+            <input type="text" id="updateTitle" placeholder="Title" class="popupTextBox">
+            <input type="text" id="updateBody" placeholder="Body" class="popupTextBox">
+            <button onclick="updatePost()" id = "updatebutton" class="button">Save</button>
+        </div>
     </div>
-    <!-- <form class="form-container" method="get" > -->
-        <h2>Search by title</h2>
-        <input type="text" id="keyTitle" placeholder="Title">
-        <!-- <input type="submit" value="Search"> -->
-        <button onclick="searchTitleOnPost()">Search</button>
-    <!-- </form> -->
-    <div class="form-container">
-        <h2>Search By content</h2>
-        <input type="text" id="keyContent" placeholder="Title">
-        <button onclick="searchContentOnPost()">Search</button>
-    </div>
-    <h2>Posts</h2>
-    <table id="postsTable" style="background-color: darkslategray;
-            color: white;font-family: monospace;">
-        <thead>
+<br><br>
+    <!-- <h2>Posts</h2> -->
+    <input type="text" id="searchBox" placeholder="Search" class="textBox">
+    <button onclick="searchTitleOnPost()" class="button">Title</button>
+    <button onclick="searchContentOnPost()" class="button">Body</button>
+    <button onclick="fetchPosts()" class="refresh">Refresh</button>
+    <table id="postsTable">
+        <thead >
             <tr>
                 <th>Title</th>
                 <th>Body</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
         </tbody>
     </table><br><br>
-    <table id="searchTable" style="background-color: darkslategray;
-            color: white;font-family: monospace;">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Body</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-
     <script>
         const url = new URLSearchParams(window.location.search);
         const user = url.get("user");
-        const API_URL = `http://localhost:8080/StorageAPI/dashboard?user=${user}`; 
-        document.getElementById("nameDisplay").innerHTML = `<h2>${user}</h2>`;
+        const API_URL = `http://localhost:8080/StorageAPI/dashboard?user=${user}`;
+
+        authenticate();
+
+        const openPopupButton = document.getElementById('create');
+        const closePopupButton = document.getElementById('closePopupButton');
+        const popupOverlay = document.getElementById('Overlay');
+        const updateopenPopupButton = document.getElementById('updatebutton');
+        const updateclosePopupButton = document.getElementById('updateclosePopupButton');
+        const updatepopupOverlay = document.getElementById('updatePage');
+        const buttonText = document.getElementById("addbutton");
+        openPopupButton.addEventListener('click', (event) => {
+            popupOverlay.style.display = 'flex';
+        });
+
+        updateopenPopupButton.addEventListener('click', (event) => {
+            updatepopupOverlay.style.display = 'flex';
+        });
+
+        closePopupButton.addEventListener('click', () => {
+            popupOverlay.style.display = 'none';
+        });
+        updateclosePopupButton.addEventListener('click', () => {
+            updatepopupOverlay.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === popupOverlay ) {
+                popupOverlay.style.display = 'none';
+            }
+            else if(event.target === updatepopupOverlay){
+                updatepopupOverlay.style.display = 'none';
+            }
+        });
+
+        
+
+        async function authenticate(){
+            try {
+                const response = await fetch(`http://localhost:8080/StorageAPI/secure/dashboard?user=${user}`,
+                {credentials: 'include'}
+            );
+            console.log(response.ok)
+            if (!response.ok) {
+                // throw new Error("Failed to fetch posts");
+                const posts = await response.json();
+                console.log(posts);
+                if(posts.status=="failed"){
+                    // alert("Authentication failed! Login please");
+                    window.location.href="login.html";
+                    return;
+                }
+            }
+            else{
+                console.log("calling fetchposts...");
+                fetchPosts();
+            }
+        } 
+        catch{
+            console.error("Error authentication:", error.API_URL);
+        }
+    }
         async function fetchPosts() {
             try {
-                  const response = await fetch(API_URL,
-                    {credentials: 'include'}
-                );
-                if (!response.ok) throw new Error("Failed to fetch posts");
+                const response = await fetch(API_URL,
+                {credentials: 'include'}
+            );
+            document.getElementById("nameDisplay").innerHTML = `<h2>${user}</h2>`;
                 const posts = await response.json();
-                if(posts.status=="failed"){
-                    alert("Authentication failed! Login please");
-                    window.location.href="login.html";
-                }
                 const tableBody = document.querySelector("#postsTable tbody");
                 tableBody.innerHTML = ""; 
 
@@ -110,6 +221,9 @@
                     row.innerHTML = `
                         <td>${post.title}</td>
                         <td>${post.body}</td>
+                        <td><button onClick="updatePreview('${post.title}','${post.body}')" style="background-color: white;border-radius: 6px;">Update</button>
+                            <button onClick="deletePost('${post.title}')" style="background-color: white;border-radius: 5px;">Delete</button></td>
+             
                     `;
                     tableBody.appendChild(row);
                 });
@@ -138,11 +252,16 @@
                 fetchPosts(); 
                 document.getElementById('title').value='';
                 document.getElementById('body').value='';
+                popupOverlay.style.display = 'none';
             } catch (error) {
                 console.error("Error adding post:", error);
             }
         }
-
+        function updatePreview(title,body){
+            document.getElementById('updatePage').style.display = 'flex';
+            document.getElementById('updateTitle').value = title;
+            document.getElementById('updateBody').value = body;
+        }
         async function updatePost() {
             const title = document.getElementById("updateTitle").value;
             const body = document.getElementById("updateBody").value;
@@ -163,12 +282,14 @@
                 document.getElementById('updateTitle').value='';
                 document.getElementById('updateBody').value='';
                 fetchPosts(); 
+                document.getElementById('updatePage').style.display = 'none';
             } catch (error) {
                 console.error("Error updating post:", error);
             }
+            
         }
         async function searchTitleOnPost() {
-            const key = document.getElementById('keyTitle').value;
+            const key = document.getElementById('searchBox').value;
             if (!key) {
                 alert("Enter a value");
                 return;
@@ -184,7 +305,7 @@
                 }
 
                 const posts = await response.json(); 
-                const tableBody = document.querySelector("#searchTable tbody");
+                const tableBody = document.querySelector("#postsTable tbody");
                 tableBody.innerHTML = ""; 
 
                 posts.forEach(post => {
@@ -192,17 +313,20 @@
                     row.innerHTML = `
                         <td>${post.title}</td>
                         <td>${post.body}</td>
+                        <td><button onClick="updatePreview('${post.title}','${post.body}')" style="background-color: white;border-radius: 6px;">Update</button>
+                            <button onClick="deletePost('${post.title}')" style="background-color: white;border-radius: 5px;">Delete</button></td>
+             
                     `;
                     tableBody.appendChild(row);
                 });
-                document.getElementById('keyTitle').value='';
+                // document.getElementById('keyTitle').value='';
             } catch (error) {
                 console.error("Error searching posts:", error);
                 alert("Failed to search posts. Check console for details.");
             }
         }
         async function searchContentOnPost() {
-            const key = document.getElementById('keyContent').value;
+            const key = document.getElementById('searchBox').value;
             if (!key) {
                 alert("Enter a value");
                 return;
@@ -218,7 +342,7 @@
                 }
 
                 const posts = await response.json(); 
-                const tableBody = document.querySelector("#searchTable tbody");
+                const tableBody = document.querySelector("#postsTable tbody");
                 tableBody.innerHTML = ""; 
 
                 posts.forEach(post => {
@@ -226,23 +350,19 @@
                     row.innerHTML = `
                         <td>${post.title}</td>
                         <td>${post.body}</td>
+                        <td><button onClick="updatePreview('${post.title}','${post.body}')" style="background-color: white;border-radius: 6px;">Update</button>
+                            <button onClick="deletePost('${post.title}')" style="background-color: white;border-radius: 5px;">Delete</button></td>
+
                     `;
                     tableBody.appendChild(row);
                 });
-                document.getElementById('keyContent').value='';
+                // document.getElementById('keyContent').value='';
             } catch (error) {
                 console.error("Error searching posts by content:", error);
                 alert("Failed to search posts by content. Check console for details.");
             }
         }
-        async function deletePost() {
-            const title = document.getElementById("deleteTitle").value;
-
-            if (!title) {
-                alert("Please enter the title of the post to delete.");
-                return;
-            }
-
+        async function deletePost(title) {
             try {
                 const response = await fetch(API_URL, {
                     method: "DELETE",
@@ -252,13 +372,29 @@
 
                 if (!response.ok) throw new Error("Failed to delete post");
                 fetchPosts(); 
-                document.getElementById('deleteTitle').value='';
             } catch (error) {
                 console.error("Error deleting post:", error);
             }
         }
-
-        fetchPosts();
+        async function logout() {
+            try {
+                const response = await fetch("http://localhost:8080/StorageAPI/logout", {
+                    method: "GET",
+                    credentials: "include", 
+                });
+                const data = await response.json();
+                console.log(data.status);
+                if (response.ok || data.status === "success") {
+                    // alert("logout");
+                    window.location.href = `login.html`;
+                }
+                else{
+                    console.log()
+                }
+            } catch (error) {
+                showError(error.message);
+            }
+        }
     </script>
 </body>
 </html>

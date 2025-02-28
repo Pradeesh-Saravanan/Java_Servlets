@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Login</title>
+        <script>
+            if(localStorage.getItem("auth")==="true"){
+                const user = localStorage.getItem("user");
+                window.location.href=`dashboard.html?user=${user}`;
+            }
+            async function login(event){
+                event.preventDefault();  
+                const user = document.getElementById("username").value;
+                const passKey = document.getElementById("password").value;
+                if (!user || !passKey) {
+                    alert("Fill all fields");
+                    return;
+                }
+                const name = {
+                    username :user,
+                    password:passKey
+                }
+
+                try {
+                    const response = await fetch("http://localhost:8080/Java_Servlets_Servers/login", {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(name)
+                    });
+                    const data = await response.json();  
+                    console.log(data); 
+                    if(response.ok && data.status == "success"){
+                        localStorage.setItem("auth",true);
+                        localStorage.setItem("user",user);
+                        window.location.href=`dashboard.html?user=${user}`;
+                    }
+                    if(data.status =='failed'){
+                        alert(data.message);
+                        return;
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <h1>Login</h1>
+        <form method="post" onsubmit="login(event)">
+            <input type="text" placeholder="Username" id="username">
+            <input type="password" placeholder="Password" id="password">  
+            <input type="submit" value="Login">
+        </form><br><br>
+        <a href="signUp.html">Sign Up</a>
+    </body>
+</html> 

@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -40,6 +41,13 @@ public class Registration extends HttpServlet {
 	}
 	private Connection getConnection() throws SQLException, ClassNotFoundException{
 		return DriverManager.getConnection("jdbc:mysql://localhost:3306/demo","root","password");
+	}
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+		response.setHeader("Access-Control-Allow-Credentials", "true");
+		response.getWriter().println("Registration servlet is running");
 	}
 	@Override
 	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException{
@@ -74,10 +82,12 @@ public class Registration extends HttpServlet {
 				}
 				else {
 					String hashed = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
-					query = "insert into userLogin(username,password) values(?,?)";
+					String idString = UUID.randomUUID().toString();
+					query = "insert into userLogin(username,password,id,value) values(?,?,?,'false')";
 					try(PreparedStatement insert =conn.prepareStatement(query)){
 						insert.setString(1, user.getUsername());
 						insert.setString(2, hashed);
+						insert.setString(3, idString);
 						insert.executeUpdate();
 						response.setContentType("application/json");
 						map.put("status", "success");
