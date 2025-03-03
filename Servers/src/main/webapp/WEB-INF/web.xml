@@ -41,7 +41,7 @@
   </filter>
   <filter-mapping>
   	<filter-name>authFilter</filter-name>
-  	<url-pattern>/secure/dashboard</url-pattern>
+  	<url-pattern>/dashboard</url-pattern>
   </filter-mapping>
 <filter>
     <filter-name>loginFilter</filter-name>

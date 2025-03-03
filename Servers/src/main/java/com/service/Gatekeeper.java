@@ -65,6 +65,10 @@ public class Gatekeeper extends HttpFilter implements Filter {
         // Disable ETag and Last-Modified to prevent 304 responses
         httpResponse.setHeader("ETag", ""); 
         httpResponse.setHeader("Last-Modified", "0");
+        if ("OPTIONS".equals(httpRequest.getMethod())) {
+            httpResponse.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
@@ -82,7 +86,7 @@ public class Gatekeeper extends HttpFilter implements Filter {
 	        	while(rSet.next()) {
 	        		if(rSet.getString("value").equals("true") && rSet.getString("username").equals(request.getParameter("user"))) {
 	        			flag = true;
-//	        			chain.doFilter(httpRequest, httpResponse);
+	        			chain.doFilter(httpRequest, httpResponse);
 	        			System.out.println("Authenticated by gatekeeper....\n");
 	        		}
 	        	}
@@ -96,6 +100,15 @@ public class Gatekeeper extends HttpFilter implements Filter {
         else {
         	response.getWriter().println("No cookies ");
         	System.out.println("No cookies in gatekeeper filter...");
+        	Map<String,String> map = new HashMap<>();
+        	Gson gson = new Gson();
+        	System.out.println("Authentication failed at gatekeeper");
+        	httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        	httpResponse.setContentType("application/json");
+			map.put("status", "failed");
+			map.put("message", "Unauthorized Access");
+			httpResponse.getWriter().println(gson.toJson(map));
+			httpResponse.getWriter().flush();
         	return;
         }
         if(!flag) {
@@ -105,7 +118,7 @@ public class Gatekeeper extends HttpFilter implements Filter {
         	httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         	httpResponse.setContentType("application/json");
 			map.put("status", "failed");
-			map.put("message", "wrong password");
+			map.put("message", "Unauthorized Access");
 			httpResponse.getWriter().println(gson.toJson(map));
 			httpResponse.getWriter().flush();
         	return;

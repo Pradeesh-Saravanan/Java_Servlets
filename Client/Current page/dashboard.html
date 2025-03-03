@@ -183,7 +183,7 @@
 
         async function authenticate(){
             try {
-                const response = await fetch(`http://localhost:8080/StorageAPI/secure/dashboard?user=${user}`,
+                const response = await fetch(`http://localhost:8080/StorageAPI/dashboard?user=${user}`,
                 {credentials: 'include'}
             );
             console.log(response.ok)
@@ -203,13 +203,15 @@
             }
         } 
         catch{
+            window.location.href="login.html";
             console.error("Error authentication:", error.API_URL);
         }
     }
         async function fetchPosts() {
             try {
-                const response = await fetch(API_URL,
-                {credentials: 'include'}
+                const response = await fetch(`http://localhost:8080/StorageAPI/dashboard?user=${user}`,
+                {
+                credentials: 'include'}
             );
             document.getElementById("nameDisplay").innerHTML = `<h2>${user}</h2>`;
                 const posts = await response.json();
@@ -244,8 +246,10 @@
             try {
                 const response = await fetch(API_URL, {
                     method: "POST",
+                    credentials:"include",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ "title":title, "body":body})
+                    body: JSON.stringify({ "title":title, "body":body}),
+
                 });
 
                 if (!response.ok) throw new Error("Failed to add post");
@@ -274,6 +278,7 @@
             try {
                 const response = await fetch(API_URL, {
                     method: "PUT",
+                    credentials:"include",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ title, body})
                 });
@@ -367,6 +372,7 @@
                 const response = await fetch(API_URL, {
                     method: "DELETE",
                     headers: { "Content-Type": "application/json" },
+                    credentials:"include",
                     body: JSON.stringify({ title})
                 });
 
@@ -386,6 +392,10 @@
                 console.log(data.status);
                 if (response.ok || data.status === "success") {
                     // alert("logout");
+                    window.location.href = `login.html`;
+                }
+                else if(data.status=='failed'){
+                    alert(data.message);
                     window.location.href = `login.html`;
                 }
                 else{

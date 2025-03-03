@@ -66,7 +66,7 @@ public class Logout extends HttpServlet{
 	                	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	                	response.setContentType("application/json");
 	        			map.put("status", "failed");
-	        			map.put("message", "user not found");
+	        			map.put("message", "Unauthorized Access");
 	        			response.getWriter().println(gson.toJson(map));
 	        			response.getWriter().flush();
 	        			System.out.println("Logout failed!");
@@ -78,6 +78,20 @@ public class Logout extends HttpServlet{
 			}
 		}
 		else {
+			Map<String,String> map = new HashMap<>();
+        	Gson gson = new Gson();
+        	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        	response.setContentType("application/json");
+			map.put("status", "failed");
+			map.put("message", "Unauthorized Access");
+			try {
+				response.getWriter().println(gson.toJson(map));
+				response.getWriter().flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("Logout failed!");
 			System.out.println("Cookies not found in logout servlet");
 		}
 		

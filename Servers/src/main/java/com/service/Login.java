@@ -152,7 +152,7 @@ public class Login extends HttpServlet {
 						response.addCookie(ck);
 						
 						
-						response.setStatus(HttpServletResponse.SC_OK);
+						response.setStatus(HttpServletResponse.SC_OK); //86400
 						response.setHeader("Set-Cookie", "id="+rs.getString("id")+ ";Max-Age=86400; Path=/; SameSite=None;Secure=true;");
 						System.out.println("Cookie set in Login...");
 						
@@ -169,7 +169,7 @@ public class Login extends HttpServlet {
 						response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 						response.setContentType("application/json");
 						map.put("status", "failed");
-						map.put("message", "wrong password");
+						map.put("message", "Unauthorized Access");
 						response.getWriter().println(gson.toJson(map));
 						response.getWriter().flush();
 						System.out.println(gson.toJson(map));
@@ -178,7 +178,7 @@ public class Login extends HttpServlet {
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 					response.setContentType("application/json");
 					map.put("status", "failed");
-					map.put("message", "wrong username");
+					map.put("message", "Unauthorized Access");
 					response.getWriter().println(gson.toJson(map));
 					response.getWriter().flush();
 					System.out.println(gson.toJson(map));

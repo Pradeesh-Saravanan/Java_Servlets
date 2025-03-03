@@ -90,7 +90,7 @@ public class Lazylogin extends HttpFilter implements Filter {
         	httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         	httpResponse.setContentType("application/json");
 			map.put("status", "failed");
-			map.put("message", "wrong password");
+			map.put("message", "Unauthorized Access");
 			httpResponse.getWriter().println(gson.toJson(map));
 			httpResponse.getWriter().flush();
         	return;
